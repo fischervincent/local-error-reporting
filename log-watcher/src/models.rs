@@ -2,21 +2,21 @@ use std::fmt;
 
 #[derive(Clone)]
 pub struct Trace {
-    pub first_seen: String, // Timestamp of the first occurrence
-    pub last_seen: String,  // Timestamp of the last occurrence
+    pub first_seen: String, // Date time of the first occurrence
+    pub last_seen: String,  // Date time of the last occurrence
     pub occurrences: Vec<TraceOccurrence>,
     pub count: u32,
 }
 
 #[derive(Clone)]
 pub struct TraceOccurrence {
-    pub timestamp: String,
+    pub datetime: String,
     pub message: String,
 }
 
 impl fmt::Display for TraceOccurrence {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "[{}]: {}", self.timestamp, self.message)
+        write!(f, "[{}]: {}", self.datetime, self.message)
     }
 }
 

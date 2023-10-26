@@ -1,7 +1,7 @@
 extern crate chrono;
 extern crate regex;
 
-use chrono::Utc;
+use std::time::{SystemTime, UNIX_EPOCH};
 use notify::{recommended_watcher, RecursiveMode, Watcher};
 use regex::Regex;
 use std::fs::File;
@@ -51,10 +51,10 @@ fn process_new_entries(
         let line = line?;
         new_position += line.as_bytes().len() as u64;
 
-        match extract_timestamp_from_log_line(&line.to_string()) {
-            Ok(timestamp) => {
+        match extract_datetime_from_log_line(&line.to_string()) {
+            Ok(datetime) => {
                 let trace_occurrence = TraceOccurrence {
-                    timestamp: timestamp,
+                    datetime,
                     message: line,
                 };
                 sender.send(trace_occurrence).unwrap();
@@ -77,17 +77,15 @@ fn process_new_entries(
 
 #[derive(Debug)]
 pub enum LogError {
-    TimestampNotFound,
+    DateTimeNotFound,
 }
 
-fn extract_timestamp_from_log_line(line: &str) -> Result<String, LogError> {
-    let re = Regex::new(r"\[(\d+)]").unwrap();
+fn extract_datetime_from_log_line(line: &str) -> Result<String, LogError> {
+    let re = Regex::new(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\]").unwrap();
     if let Some(captures) = re.captures(line) {
-        captures
-            .get(1)
-            .map(|m| Ok(m.as_str().to_string()))
-            .unwrap_or(Err(LogError::TimestampNotFound))
-    } else {
-        Err(LogError::TimestampNotFound)
+        if let Some(matched_date) = captures.get(1) {
+            return Ok(matched_date.as_str().to_string());
+        }
     }
+    Err(LogError::DateTimeNotFound)
 }

@@ -16,9 +16,12 @@ Local Log Watcher streamlines this by monitoring a local log file, intelligently
 ./log-watcher --log-file-path /path/to/your/logfile.log
 ```
 
+## Expected log format
+
+**Date:** [2023-10-26 21:19:55,526]. If a log entry does not contain the datetime in this format , it will be ignored by Local Log Watcher.
+
 ### Command-Line Arguments
 **--log-file-path**: Specifies the path to the log file you wish to monitor.
-
 
 ## Setup for dev
 ### Prerequisites
